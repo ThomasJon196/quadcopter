@@ -21,3 +21,17 @@ Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/qua
 - Which sensors are neccecary to stabilize drone?
 - How to write the PID-Controller?
 
+
+#### Flight controller procedure
+- Calibrate Gyro
+- LOOP
+  - Start-Routine: start motors
+  - Stop-Routine:  turn of motors
+  - Air-Routine:   
+    - measure current angle
+    - calculate pid values for pitch, roll, yaw
+    - Adjust ESC pulse
+    - (integrate battery voltage)
+
+
+
