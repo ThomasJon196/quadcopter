@@ -13,6 +13,17 @@
 
 ## Next steps
 
+### IMU - MP6050 (+ Magnetometer)
+- https://www.teachmemicro.com/orientation-arduino-mpu6050/ <- explanation.
+
+- Gyroscope + Accelerometer
+- I2C - Communication
+
+
+
+
+- (Interrupt Pin signales board when new data is available.
+
 ### Flight-Control for self stabilizing quadcopter
 
 Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
