@@ -11,5 +11,10 @@
 |Finished       | Self stabilizing drone works.|
 
 
-### Next steps
+## Next steps
+
+### How to code a self stabilizing quadcopter
+
+- Which sensors are neccecary to stabilize drone?
+- How to write the PID-Controller?
 
