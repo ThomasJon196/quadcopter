@@ -15,6 +15,8 @@
 
 ### Flight-Control for self stabilizing quadcopter
 
+Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
+
 - Write minimal simulation
 - Which sensors are neccecary to stabilize drone?
 - How to write the PID-Controller?
