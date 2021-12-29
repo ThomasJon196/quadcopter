@@ -15,6 +15,7 @@
 
 ### Flight-Control for self stabilizing quadcopter
 
+- Write minimal simulation
 - Which sensors are neccecary to stabilize drone?
 - How to write the PID-Controller?
 
