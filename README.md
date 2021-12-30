@@ -14,7 +14,10 @@
 ## Next steps
 
 ### IMU - MP6050 (+ Magnetometer)
+Usefull websites:
 - https://www.teachmemicro.com/orientation-arduino-mpu6050/ <- explanation.
+- https://lastminuteengineers.com/mpu6050-accel-gyro-arduino-tutorial/ <- basic accel./gyro readings (angles still need to be calculated)
+- https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050 <- Complete library for MPU readings! (but how to include magnetometer?)
 
 - Gyroscope + Accelerometer
 - I2C - Communication
