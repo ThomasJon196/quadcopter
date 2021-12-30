@@ -1,0 +1,10 @@
+
+
+
+
+
+Get gyro-range:
+
+uint8_t READ_FS_SEL = mpu.getFullScaleGyroRange();
+
+GYRO_FACTOR = 131.0/(READ_FS_SEL + 1);
