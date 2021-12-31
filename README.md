@@ -1,15 +1,14 @@
 # Quadcopter
 ## Build & Software
 
-
-|Question|Answer|
-|---|---|
-|Why?           | Figure out how interesting robotics might be and learn to build drone. (70/30)|
-|When?          | 2021 |
-|Importance     | Below job search and preperation for master |
-|How much time? | 3d / week |
-|Finished       | Self stabilizing drone works.|
-
+This repo contains a noobie quadcopter-build and implementation based on:
+- Arduino Uno
+- MPU6050 Gyroscope/Accelerometer module
+- nRF24L01 Wireless communication module
+- Electronic speed controllers :
+- Motors
+- Power distribution board (XT60 male)
+- 3S Lipo Battery (XT60 female)
 
 ## Next steps
 
@@ -47,5 +46,14 @@ Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/qua
   - Adjust ESC pulse
   - (integrate battery voltage)
 
+
+
+|Question|Answer|
+|---|---|
+|Why?           | Figure out how interesting robotics might be and learn to build drone. (70/30)|
+|When?          | 2021 |
+|Importance     | Below job search and preperation for master |
+|How much time? | 3d / week |
+|Finished       | Self stabilizing drone works.|
 
 
