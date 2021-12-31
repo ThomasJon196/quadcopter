@@ -13,6 +13,11 @@
 
 ## Next steps
 
+- Calibrate gyro on startup
+- Read/Write HC-05 (Bluetooth Module) for PID-Tuning
+
+
+
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
 - https://www.teachmemicro.com/orientation-arduino-mpu6050/ <- explanation.
@@ -21,9 +26,7 @@ Usefull websites:
 
 - Gyroscope + Accelerometer
 - I2C - Communication
-
-
-
+- DMP (digital motion processor) - programming to include magnetometer (future work)
 
 - (Interrupt Pin signales board when new data is available.
 
@@ -31,15 +34,11 @@ Usefull websites:
 
 Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
 
-- Write minimal simulation
-- Which sensors are neccecary to stabilize drone?
-- How to write the PID-Controller?
-
 
 #### Flight controller procedure
 - SETUP
   - Configure DMP(Digital Motion Processor) of MPU6050
-  - Calibrate Gyro (on drone startup, else wrong offsets) 
+  - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
   - Setup ESC's/Motors with PWM(Pulse width modulation) signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
 - LOOP(AIR-Routine)   
   - read reviever data (nRF24L01-module)
