@@ -38,11 +38,12 @@ Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/qua
 
 #### Flight controller procedure
 - SETUP
+  - Configure DMP(Digital Motion Processor) of MPU6050
   - Calibrate Gyro (on drone startup, else wrong offsets) 
-  - Setup ESC's/Motors with PWM signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
+  - Setup ESC's/Motors with PWM(Pulse width modulation) signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
 - LOOP(AIR-Routine)   
-  - read reviever data
-  - measure current angle
+  - read reviever data (nRF24L01-module)
+  - read current angle from IMU (intertial measurement unit)
   - calculate pid values for pitch, roll, yaw
   - Adjust ESC pulse
   - (integrate battery voltage)
