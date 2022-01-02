@@ -32,7 +32,7 @@ Usefull websites:
 ### Flight-Control for self stabilizing quadcopter
 
 Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
-
+https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e
 
 #### Flight controller procedure
 - SETUP
