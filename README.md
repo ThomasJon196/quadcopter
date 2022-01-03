@@ -15,7 +15,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 - Calibrate gyro on startup
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
-- PID Tuning **Fix quadcopter to only 1dof e.g. only pitch or roll** -> Fix with a string along the roll axis. shown here :https://www.youtube.com/watch?v=yvame7QLWbo
+- PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
   - Add a proportional control to improve the rise time
   - Add a derivative control to reduce the overshoot
   - Add an integral control to reduce the steady-state error
