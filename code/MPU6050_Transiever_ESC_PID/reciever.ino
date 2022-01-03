@@ -9,8 +9,8 @@ void recvData()
 
 void resetData()
 {
-  //We define the inicial value of each data input
-  //3 potenciometers will be in the middle position so 127 is the middle from 254
+  //We define the initial value of each data input
+  //Joysticks will be in the middle position so 127 is the middle from 254
   data.throttle = 0;
   data.yaw = 127;
   data.pitch = 127;
