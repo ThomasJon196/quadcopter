@@ -1,5 +1,5 @@
 # Quadcopter
-## Build & Software
+## Hardware & Software
 
 This repo contains a noobie quadcopter-build and implementation based on:
 - Arduino Uno
