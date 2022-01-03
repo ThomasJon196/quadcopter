@@ -60,8 +60,8 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
 
 |Question|Answer|
 |---|---|
-|Why?           | Figure out how interesting robotics might be and learn to build drone. (70/30)|
-|When?          | 2021 |
+|Why?           | Figure out how interesting robotics might be and learn to build drone.|
+|When?          | starting november 2021|
 |Importance     | Below job search and preperation for master |
 |How much time? | 3d / week |
 |Finished       | Self stabilizing drone works.|
