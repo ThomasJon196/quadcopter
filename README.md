@@ -51,7 +51,7 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
   - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
   - Setup ESC's/Motors with PWM(Pulse width modulation) signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
 - LOOP(AIR-Routine)   
-  - read reviever data (nRF24L01-module)
+  - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
   - read current angles \[pitch, roll, yaw\] from MPU6050
   - Adjust ESC pulse (currently via Servo.h)
   - (integrate battery voltage) **TODO**
