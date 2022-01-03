@@ -67,7 +67,19 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
 ---
 ## Drone Build
 
-### Choosing Battery
+#### Arduino
+
+#### Frame
+
+#### Motors, Electronic Speed Controllers & Propellors
+
+#### Inertial Measurement Unit
+
+#### Communication
+
+#### Power Distribution
+
+#### Battery
 
 Lipo Guide: https://rogershobbycenter.com/lipoguide
 
