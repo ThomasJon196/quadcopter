@@ -27,9 +27,10 @@ This repo contains a noobie quadcopter-build and implementation based on:
 ### ESC calibration
 
 To have properly working ESC's/motors the ESC's have to be calibrated.
-This is done by apllying the minimum(1000us) and maximum(2000us) PWM-signal(pulse-width-modulation) to the ESC's while they are connected to a battery.
-[ESC_calibration file](source/ESC_calibration/ESC_calibration.ino) can be used for that.
-
+This is done by apllying the minimum(1000us) and maximum(2000us) PWM-signal(pulse-width-modulation) to the ESC's while they are connected to a battery.\
+[ESC_calibration file](source/ESC_calibration/ESC_calibration.ino) can be used for that.\
+more about pulse-width-modulation: https://www.allaboutcircuits.com/textbook/semiconductors/chpt-11/pulse-width-modulation/
+more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html
 
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
@@ -57,7 +58,6 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
 - SETUP
   - Configure DMP(Digital Motion Processor) of MPU6050
   - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
-  - Setup ESC's/Motors with PWM(Pulse width modulation) signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
 - LOOP(AIR-Routine)   
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
   - read current angles \[pitch, roll, yaw\] from MPU6050
