@@ -5,23 +5,34 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - Arduino Uno
 - MPU6050 Gyroscope/Accelerometer module
 - nRF24L01 Wireless communication module
-- Electronic speed controllers :
-- Motors
 - Power distribution board (XT60 male)
+- Electronic speed controllers : Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S 
+- Motors : 2205 2300kV (brushless) 2xCW/2xCCW
+- Props 5045
 - 3S Lipo Battery (XT60 female)
 
 ## Next steps
 
+- Include safety switch & condition for disarming drone (Button and if-Case for angle)
 - Calibrate gyro on startup
+- Calibrate motors/esc's
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
-
-
+- PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
+  - Add a proportional control to improve the rise time
+  - Add a derivative control to reduce the overshoot
+  - Add an integral control to reduce the steady-state error
+- Implement Arduino class/function for PID-Controller (currently multiplied code)
 
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
 - https://www.teachmemicro.com/orientation-arduino-mpu6050/ <- explanation.
 - https://lastminuteengineers.com/mpu6050-accel-gyro-arduino-tutorial/ <- basic accel./gyro readings (angles still need to be calculated)
 - https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050 <- Complete library for MPU readings! (but how to include magnetometer?)
+
+
+- angular rate system implementation?
+- PWM frequency for ESC's via analogWrite() rather than Servo.h 490Hz/50Hz -> might not be responsive enough
+- digital low pass filter for MPU6050 20Hz?
 
 - Gyroscope + Accelerometer
 - I2C - Communication
@@ -32,19 +43,18 @@ Usefull websites:
 ### Flight-Control for self stabilizing quadcopter
 
 Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
+https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e
 
-
-#### Flight controller procedure
+#### Flight controller procedure/features
 - SETUP
   - Configure DMP(Digital Motion Processor) of MPU6050
   - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
   - Setup ESC's/Motors with PWM(Pulse width modulation) signal. (e.g. https://ardupilot.org/copter/docs/esc-calibration.html)
 - LOOP(AIR-Routine)   
-  - read reviever data (nRF24L01-module)
-  - read current angle from IMU (intertial measurement unit)
-  - calculate pid values for pitch, roll, yaw
-  - Adjust ESC pulse
-  - (integrate battery voltage)
+  - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
+  - read current angles \[pitch, roll, yaw\] from MPU6050
+  - Adjust ESC pulse (currently via Servo.h)
+  - (integrate battery voltage) **TODO**
 
 
 
