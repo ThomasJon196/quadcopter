@@ -5,9 +5,10 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - Arduino Uno
 - MPU6050 Gyroscope/Accelerometer module
 - nRF24L01 Wireless communication module
-- Electronic speed controllers :
-- Motors
 - Power distribution board (XT60 male)
+- Electronic speed controllers : Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S 
+- Motors : 2205 2300kV (brushless) 2xCW/2xCCW
+- Props 5045
 - 3S Lipo Battery (XT60 female)
 
 ## Next steps
