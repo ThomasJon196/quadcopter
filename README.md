@@ -22,7 +22,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
   - Add a derivative control to reduce the overshoot
   - Add an integral control to reduce the steady-state error
 - Implement Arduino class/function for PID-Controller (currently multiplied code)
-
+- Copyright-rules for code from other repositories?!
 ---
 ### ESC calibration
 
