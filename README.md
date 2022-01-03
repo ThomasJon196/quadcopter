@@ -81,8 +81,12 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
 
 #### Battery
 
-Lipo Guide: https://rogershobbycenter.com/lipoguide
+Lipo Guide: https://rogershobbycenter.com/lipoguide\
 [Why storage voltage is only important for long lasting (years) batteries.](https://www.propwashed.com/lipo-storage-voltage/)
+
+
+
+
 
 
 
