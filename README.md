@@ -64,7 +64,12 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
   - Adjust ESC pulse (currently via Servo.h)
   - (integrate battery voltage) **TODO**
 
+---
+## Drone Build
 
+### Choosing Battery
+
+Lipo Guide: https://rogershobbycenter.com/lipoguide
 
 |Question|Answer|
 |---|---|
