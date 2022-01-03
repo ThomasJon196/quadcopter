@@ -77,6 +77,8 @@ https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-par
 
 #### Communication
 
+https://github.com/akarsh98/DIY-Radio-Controller-for-Drone-Arduino-Based-Quadcopter
+
 #### Power Distribution
 
 #### Battery
