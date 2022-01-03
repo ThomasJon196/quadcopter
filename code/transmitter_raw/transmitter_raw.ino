@@ -70,8 +70,8 @@ void loop()
   data.yaw      = mapJoystickValues( analogRead(A2),  8, 505, 1018, false );
   data.pitch    = mapJoystickValues( analogRead(A1), 4, 490, 1018, false );
   data.roll     = mapJoystickValues( analogRead(A0), 3, 515, 1019, false );
-  //data.AUX1     = digitalRead(4); //The 2 toggle switches
-  //data.AUX2     = digitalRead(5);
+  data.AUX1     = digitalRead(3); //The 2 toggle switches
+  data.AUX2     = digitalRead(4);
 
 //  Print analogRead(.) for calibration...
 //  Serial.print("Throttle: ");

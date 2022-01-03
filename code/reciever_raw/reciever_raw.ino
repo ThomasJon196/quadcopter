@@ -50,7 +50,7 @@ data.AUX2 = 0;
 
 void setup()
 {
-Serial.begin(250000); //Set the speed to 9600 bauds if you want.
+Serial.begin(9600); //Set the speed to 9600 bauds if you want.
 //You should always have the same speed selected in the serial monitor
 resetData();
 radio.begin();
