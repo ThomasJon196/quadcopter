@@ -14,7 +14,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 - Calibrate gyro on startup
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
-
+- PID Tuning **Fix quadcopter to only 1dof e.g. only pitch or roll** -> Fix with a stick along the roll axis
 
 
 ### IMU - MP6050 (+ Magnetometer)
