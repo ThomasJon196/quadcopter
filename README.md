@@ -65,7 +65,7 @@ https://github.com/lobodol/drone-flight-controller
 #### Flight controller procedure/features
 - SETUP
   - Configure DMP(Digital Motion Processor) of MPU6050
-  - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
+  - Calibrate Gyro (on drone startup, else wrong offsets)
 - LOOP(AIR-Routine)   
   - Arm(AUX1) & Disarm(AUX2) drone. 
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
