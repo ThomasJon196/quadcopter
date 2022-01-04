@@ -66,6 +66,8 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
+bool pitch_roll_inverted = true;
+
 // ================================================================
 // ===                     ESC - SETUP                          ===
 // ================================================================
@@ -78,6 +80,8 @@ byte servoPin_RearLeft = 5;      // ESC Signal pin
 byte servoPin_FrontLeft = 6;        // ESC Signal pin
 Servo servo_FrontLeft, servo_RearRight, servo_FrontRight, servo_RearLeft;
 bool motor_on_flag = false;
+unsigned long loop_timer, now, period, difference;
+
 
 // ================================================================
 // ===                     Reciever - SETUP                     ===
@@ -105,9 +109,9 @@ MyData receiver_data;
 // ================================================================
 // ===                     Bluetooth - SETUP                    ===
 // ================================================================
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(0, 1); // RX, TX
+//SoftwareSerial mySerial(0, 1); // RX, TX
 
 //int ledpin=13;
 
@@ -149,15 +153,10 @@ void setup() {
         Fastwire::setup(400, true);
     #endif
 
-    // initialize serial communication
-    // (115200 chosen because it is required for Teapot Demo output, but it's
-    // really up to you depending on your project)
-    //Serial.begin(115200);
-    //while (!Serial); // wait for Leonardo enumeration, others continue immediately
-
+   
     // initialize bluetooth serial communication
-    mySerial.begin(115200);
-    mySerial.println("Hallo vom Bluetooth Modul");
+    Serial.begin(230400);
+    Serial.println("Hallo vom Bluetooth Modul");
 
     
     // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
@@ -167,13 +166,13 @@ void setup() {
     // crystal solution for the UART timer.
 
     // initialize device
-    mySerial.println(F("Initializing I2C devices..."));
+    Serial.println(F("Initializing I2C devices..."));
     mpu.initialize();
-    pinMode(INTERRUPT_PIN, INPUT);
+    //pinMode(INTERRUPT_PIN, INPUT);
 
     // verify connection
-    mySerial.println(F("Testing device connections..."));
-    mySerial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+    Serial.println(F("Testing device connections..."));
+    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
     // wait for ready
     //Serial.println(F("\nSend any character to begin DMP programming and demo: "));
@@ -187,7 +186,7 @@ void setup() {
     //while (Serial.available() && Serial.read()); // empty buffer again
 
     // load and configure the DMP
-    mySerial.println(F("Initializing DMP..."));
+    Serial.println(F("Initializing DMP..."));
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
@@ -203,18 +202,18 @@ void setup() {
         mpu.CalibrateGyro(6);
         mpu.PrintActiveOffsets();
         // turn on the DMP, now that it's ready
-        mySerial.println(F("Enabling DMP..."));
+        Serial.println(F("Enabling DMP..."));
         mpu.setDMPEnabled(true);
 
         // enable Arduino interrupt detection
-        mySerial.print(F("Enabling interrupt detection (Arduino external interrupt "));
-        mySerial.print(digitalPinToInterrupt(INTERRUPT_PIN));
-        mySerial.println(F(")..."));
+        Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
+        Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
+        Serial.println(F(")..."));
         attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
         mpuIntStatus = mpu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        mySerial.println(F("DMP ready! Waiting for first interrupt..."));
+        Serial.println(F("DMP ready! Waiting for first interrupt..."));
         dmpReady = true;
 
         // get expected DMP packet size for later comparison
@@ -224,15 +223,17 @@ void setup() {
         // 1 = initial memory load failed
         // 2 = DMP configuration updates failed
         // (if it's going to break, usually the code will be 1)
-        mySerial.print(F("DMP Initialization failed (code "));
-        mySerial.print(devStatus);
-        mySerial.println(F(")"));
+        Serial.print(F("DMP Initialization failed (code "));
+        Serial.print(devStatus);
+        Serial.println(F(")"));
     }
 
     // configure LED for output
     pinMode(LED_PIN, OUTPUT);
-    
-    motor_on_flag = true;
+
+
+    period = 4000;
+    loop_timer = micros();
 }
 
 // Variables for PID control (have to be tuned)
@@ -243,7 +244,7 @@ float Kp_YPR[] = {2,2,2};
 float Ki_YPR[] = {0.001,0.001,0.001};
 float Kd_YPR[] = {10,10,10};
 
-float Kpid_Y[] = {2, 0, 0};
+float Kpid_Y[] = {0.5, 0, 0};
 float Kpid_P[] = {2, 0.001, 0};
 float Kpid_R[] = {2, 0.001, 0};
 
@@ -256,12 +257,29 @@ float esc_1, esc_2, esc_3, esc_4;
 float throttle;
 int AUX_2_counter;
 
+void read_gyro()
+{
+  // if programming failed, don't try to do anything
+  if (!dmpReady) return;
+  // read a packet from FIFO
 
+  if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
+
+      #ifdef OUTPUT_READABLE_YAWPITCHROLL
+          // display Euler angles in degrees
+          mpu.dmpGetQuaternion(&q, fifoBuffer);
+          mpu.dmpGetGravity(&gravity, &q);
+          mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+
+      #endif
+  }
+}
 
 void loop() {
+    unsigned long now = millis();
     // Recieve from nRF24L01
     recvData(receiver_data);
-    unsigned long now = millis();
+    
     //Here we check if we've lost signal, if we did we reset the values 
     if ( now - lastRecvTime > 1000 ) {
     // Signal lost?
@@ -280,36 +298,27 @@ void loop() {
     if(receiver_data.AUX2 == 1){
       motor_on_flag = false;
     }
-    
-    // if programming failed, don't try to do anything
-    if (!dmpReady) return;
-    // read a packet from FIFO
-
-    if (mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) { // Get the Latest packet 
-
-        #ifdef OUTPUT_READABLE_YAWPITCHROLL
-            // display Euler angles in degrees
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-//            mySerial.print("ypr\t");
-//            Serial.print(ypr[0] * 180/M_PI);
-//            Serial.print("\t");
-//            Serial.print(ypr[1] * 180/M_PI);
-//            Serial.print("\t");
-//            Serial.println(ypr[2] * 180/M_PI);
-        #endif
+    if(receiver_data.AUX1 == 1){
+      motor_on_flag = true;
+    }
     
     
+    // GYRO
+    read_gyro();
     
-    // PID control
+    // PID control    
     current_time = millis();
     time_delta   = current_time - last_time;
     last_time = current_time;
     yaw_error = yaw_input - ypr[0] * 180/M_PI;
-    pitch_error = pitch_input - ypr[1] * 180/M_PI;
-    roll_error = roll_input - ypr[2] * 180/M_PI;
 
+    if(!pitch_roll_inverted){
+      pitch_error = pitch_input - ypr[1] * 180/M_PI;
+      roll_error = roll_input - ypr[2] * 180/M_PI;
+    }else{
+      pitch_error = pitch_input - ypr[2] * 180/M_PI;
+      roll_error = roll_input - ypr[1] * 180/M_PI;
+    }
 
     // Calc each P,I,D-value for yaw, pitch, roll
     yaw_adjust = calc_pid(Kpid_Y, yaw_error, integrated_error_yaw, last_reading[0], time_delta);
@@ -326,77 +335,111 @@ void loop() {
     if(throttle > 1700){
       throttle = 1700;
     }
-    if(throttle < 1100){
-      throttle = 1100;
+    if(throttle < 1050){
+      throttle = 1050;
     }
 
     
-    esc_1 = throttle - pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
-    esc_2 = throttle + pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
-    esc_3 = throttle + pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
-    esc_4 = throttle - pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
+    esc_1 = throttle - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
+    esc_2 = throttle + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
+    esc_3 = throttle + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
+    esc_4 = throttle - pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
     if(esc_1 > 1800){
       esc_1 = 1800;
-    }else if(esc_1 < 1150){
-      esc_1 = 1150;
+    }else if(esc_1 < 1050){
+      esc_1 = 1050;
     }
     if(esc_2 > 1800){
       esc_2 = 1800;
-    }else if(esc_2 < 1150){
-      esc_2 = 1150;
+    }else if(esc_2 < 1050){
+      esc_2 = 1050;
     }
     if(esc_3 > 1800){
       esc_3 = 1800;
-    }else if(esc_3 < 1150){
-      esc_3 = 1150;
+    }else if(esc_3 < 1050){
+      esc_3 = 1050;
     }
     if(esc_4 > 1800){
       esc_4 = 1800;
-    }else if(esc_4 < 1150){
-      esc_4 = 1150;
+    }else if(esc_4 < 1050){
+      esc_4 = 1050;
     }
 
-    
-    
-    
-    mySerial.print("esc_1\t");
-    mySerial.print(esc_1);
-    mySerial.print("esc_2\t");
-    mySerial.print(esc_2);
-    mySerial.print("esc_3\t");
-    mySerial.print(esc_3);
-    mySerial.print("esc_4\t");
-    mySerial.print(esc_4);
-    mySerial.print("throttle\t");
-    mySerial.println(throttle_input);
-  
+           
 
-//    Serial.print("ypr\t");
-//    Serial.print(yaw_adjust);
-//    Serial.print("\t");
-//    Serial.print(pitch_adjust);
-//    Serial.print("\t");
-//    Serial.println(roll_adjust);
-        
-
-        // blink LED to indicate activity
-        blinkState = !blinkState;
-        digitalWrite(LED_PIN, blinkState);
-    }
+    // blink LED to indicate activity
+    blinkState = !blinkState;
+    digitalWrite(LED_PIN, blinkState);
+    
     
     if(motor_on_flag){
+      
       servo_FrontRight.writeMicroseconds(esc_1); 
       servo_RearRight.writeMicroseconds(esc_2);  
       servo_RearLeft.writeMicroseconds(esc_3);   
-      servo_FrontLeft.writeMicroseconds(esc_4);  
+      servo_FrontLeft.writeMicroseconds(esc_4);
+      
+      //applyMotorSpeed();  
     }else{
-      servo_FrontRight.writeMicroseconds(1000); 
-      servo_RearRight.writeMicroseconds(1000);  
-      servo_RearLeft.writeMicroseconds(1000);   
-      servo_FrontLeft.writeMicroseconds(1000);
-      mySerial.print("Motors stopped!");
-      delay(1000);
+      esc_1 = 1000;
+      esc_2 = 1000;
+      esc_3 = 1000;
+      esc_4 = 1000;
+      
+      servo_FrontRight.writeMicroseconds(esc_1); 
+      servo_RearRight.writeMicroseconds(esc_2);  
+      servo_RearLeft.writeMicroseconds(esc_3);   
+      servo_FrontLeft.writeMicroseconds(esc_4);
+      //applyMotorSpeed();  
+      Serial.print("Motors stopped!");
     }
-        
     
+    //print_info();
+
+    now = micros();
+    difference = now - loop_timer;
+    loop_timer = now;
+
+   
+        
+    Serial.print("Loop Time: ");
+    Serial.println(difference);
 }
+
+
+void print_info(){
+    Serial.print("esc_1\t");
+    Serial.print(esc_1);
+    Serial.print("esc_2\t");
+    Serial.print(esc_2);
+    Serial.print("esc_3\t");
+    Serial.print(esc_3);
+    Serial.print("esc_4\t");
+    Serial.print(esc_4);
+    Serial.print("throttle\t");
+    Serial.println(throttle_input);
+}
+
+/*
+void applyMotorSpeed() {
+    // Refresh rate is 250Hz: send ESC pulses every 4000µs
+    while ((now = micros()) - loop_timer < period);
+
+    // Update loop timer
+    loop_timer = now;
+
+    // Set pins #3 #4 #5 #6 HIGH
+    PORTD |= B01111000;
+
+    // Wait until all pins #4 #5 #6 #7 are LOW
+    while (PORTD >= 8) {
+        now        = micros();
+        difference = now - loop_timer;
+
+        if (difference >= esc_1) PORTD &= B11110111; // Set pin #3 LOW
+        if (difference >= esc_2) PORTD &= B11101111; // Set pin #4 LOW
+        if (difference >= esc_3) PORTD &= B11011111; // Set pin #5 LOW
+        if (difference >= esc_4) PORTD &= B10111111; // Set pin #6 LOW
+    }
+}
+*/

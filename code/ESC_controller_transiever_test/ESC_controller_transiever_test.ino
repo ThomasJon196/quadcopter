@@ -92,11 +92,21 @@ void loop()
   pitch_input    = data.pitch;
   roll_input     = data.roll;
 
+  
+  if(throttle_input > 1500){
+    servo_FrontRight.writeMicroseconds(1100); // Direct write to esc
+    servo_RearRight.writeMicroseconds(1100); // Direct write to esc
+    servo_RearLeft.writeMicroseconds(1100); // Direct write to esc
+    servo_FrontLeft.writeMicroseconds(1100); // Direct write to esc
+  }else{
+    servo_FrontRight.writeMicroseconds(1000); // Direct write to esc
+    servo_RearRight.writeMicroseconds(1000); // Direct write to esc
+    servo_RearLeft.writeMicroseconds(1000); // Direct write to esc
+    servo_FrontLeft.writeMicroseconds(1000); // Direct write to esc
+  }
+  
 
-  servo_FrontRight.write(throttle_input); // Direct write to esc
-  servo_RearRight.write(throttle_input); // Direct write to esc
-  servo_RearLeft.write(throttle_input); // Direct write to esc
-  servo_FrontLeft.write(throttle_input); // Direct write to esc
+  
   //value = analogRead(PIN_POTI);
   //if(Serial.available() > 1){
     //value = Serial.parseInt();

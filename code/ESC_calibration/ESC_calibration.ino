@@ -23,10 +23,10 @@ void setup() {
   delay(1500);
   Serial.println("ESC calibration routine initializes...");
   
-  motor1.attach(MOTOR_PIN1);
-  motor2.attach(MOTOR_PIN2);
-  motor3.attach(MOTOR_PIN3);
-  motor4.attach(MOTOR_PIN4);
+  motor1.attach(MOTOR_PIN_1);
+  motor2.attach(MOTOR_PIN_2);
+  motor3.attach(MOTOR_PIN_3);
+  motor4.attach(MOTOR_PIN_4);
 
   delay(1000);
   Serial.println("ESC's attached.");
