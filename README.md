@@ -6,17 +6,15 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - MPU6050 Gyroscope/Accelerometer module
 - nRF24L01 Wireless communication module
 - Power distribution board (XT60 male)
-- Electronic speed controllers : Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S 
+- Electronic speed controllers : [Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S](https://hobbyking.com/de_de/blheli-s-30a.html)
 - Motors : 2205 2300kV (brushless) 2xCW/2xCCW
 - Props 5045
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
 
-- Include how to arm the motors
-- Include safety switch & condition for disarming drone (Button and if-Case for angle)
-- Calibrate gyro on startup
-- Read/Write HC-05 (Bluetooth Module) for PID-Tuning
+- Include safety condition for disarming drone (if-Case for angle)
+- Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
 - PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
   - Add a proportional control to improve the rise time
   - Add a derivative control to reduce the overshoot
@@ -29,7 +27,15 @@ To have properly working ESC's/motors the ESC's have to be calibrated.
 This is done by applying the minimum(1000us) and maximum(2000us) PWM-signal(pulse-width-modulation) to the ESC's while they are connected to a battery.\
 [ESC_calibration file](code/ESC_calibration/ESC_calibration.ino) can be used for that.\
 more about pulse-width-modulation: https://www.allaboutcircuits.com/textbook/semiconductors/chpt-11/pulse-width-modulation/
-more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html
+more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html\
+
+To arm the ESC's, connect the battery with minimal throttle speed (1000us).
+
+### Arduino Baud-Rate
+ 
+- Sets the datarate in bits/s for the serial communication.
+- A to small baud-rate might slow down the loop(), if many Serial.prints are executed.
+
 
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
@@ -50,14 +56,16 @@ Usefull websites:
 
 ### Flight-Control for self stabilizing quadcopter
 
-Similar project: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf
-https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e
+Similar projects: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf\\
+https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e\\
+https://github.com/lobodol/drone-flight-controller
 
 #### Flight controller procedure/features
 - SETUP
   - Configure DMP(Digital Motion Processor) of MPU6050
   - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
 - LOOP(AIR-Routine)   
+  - Arm(AUX1) & Disarm(AUX2) drone. 
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
   - read current angles \[pitch, roll, yaw\] from MPU6050
   - Adjust ESC pulse (currently via Servo.h)
