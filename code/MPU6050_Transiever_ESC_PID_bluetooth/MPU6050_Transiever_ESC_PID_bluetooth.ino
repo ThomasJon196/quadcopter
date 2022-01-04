@@ -180,10 +180,10 @@ void setup() {
     //while (Serial.available() && Serial.read()); // empty buffer
     //while (!Serial.available());                 // wait for data
     //Serial.println(F("\nTurn pitch all the way up: "));
-    //recvData();
-//    while (!(data.pitch > 230)){
-//      recvData();// wait for Max pitch signal
-//    }
+    recvData(receiver_data);
+    while (!(receiver_data.pitch > 230)){
+      recvData(receiver_data);// wait for Max pitch signal
+    }
     //while (Serial.available() && Serial.read()); // empty buffer again
 
     // load and configure the DMP
@@ -254,7 +254,7 @@ float integrated_error_pitch;
 float integrated_error_roll;
 float esc_1, esc_2, esc_3, esc_4;
 float throttle;
-
+int AUX_2_counter;
 
 
 
@@ -276,7 +276,11 @@ void loop() {
       motor_on_flag = false;
     }
     
-  
+
+    if(receiver_data.AUX2 == 1){
+      motor_on_flag = false;
+    }
+    
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
     // read a packet from FIFO
@@ -354,7 +358,7 @@ void loop() {
 
     
     
-    /*
+    
     mySerial.print("esc_1\t");
     mySerial.print(esc_1);
     mySerial.print("esc_2\t");
@@ -365,7 +369,7 @@ void loop() {
     mySerial.print(esc_4);
     mySerial.print("throttle\t");
     mySerial.println(throttle_input);
-  */
+  
 
 //    Serial.print("ypr\t");
 //    Serial.print(yaw_adjust);
@@ -381,15 +385,15 @@ void loop() {
     }
     
     if(motor_on_flag){
-      servo_FrontRight.write(esc_1); 
-      servo_RearRight.write(esc_2);  
-      servo_RearLeft.write(esc_3);   
-      servo_FrontLeft.write(esc_4);  
+      servo_FrontRight.writeMicroseconds(esc_1); 
+      servo_RearRight.writeMicroseconds(esc_2);  
+      servo_RearLeft.writeMicroseconds(esc_3);   
+      servo_FrontLeft.writeMicroseconds(esc_4);  
     }else{
-      servo_FrontRight.write(1000); 
-      servo_RearRight.write(1000);  
-      servo_RearLeft.write(1000);   
-      servo_FrontLeft.write(1000);
+      servo_FrontRight.writeMicroseconds(1000); 
+      servo_RearRight.writeMicroseconds(1000);  
+      servo_RearLeft.writeMicroseconds(1000);   
+      servo_FrontLeft.writeMicroseconds(1000);
       mySerial.print("Motors stopped!");
       delay(1000);
     }
