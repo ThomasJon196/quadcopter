@@ -13,6 +13,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
+  - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
 - Mount same motors.
 - Include safety condition for disarming drone (if-Case for angle)
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
