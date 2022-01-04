@@ -13,7 +13,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 
-- Include how to arm the motors
+- Understand arduino baud-rate/ loop slow down?
 - Include safety switch & condition for disarming drone (Button and if-Case for angle)
 - Calibrate gyro on startup
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
@@ -29,7 +29,10 @@ To have properly working ESC's/motors the ESC's have to be calibrated.
 This is done by applying the minimum(1000us) and maximum(2000us) PWM-signal(pulse-width-modulation) to the ESC's while they are connected to a battery.\
 [ESC_calibration file](code/ESC_calibration/ESC_calibration.ino) can be used for that.\
 more about pulse-width-modulation: https://www.allaboutcircuits.com/textbook/semiconductors/chpt-11/pulse-width-modulation/
-more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html
+more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html\
+
+To arm the ESC's, connect the battery with minimal throttle speed (1000us).
+
 
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
