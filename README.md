@@ -13,7 +13,6 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 
-- Understand arduino baud-rate/ loop slow down?
 - Include safety switch & condition for disarming drone (Button and if-Case for angle)
 - Calibrate gyro on startup
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
@@ -32,6 +31,11 @@ more about pulse-width-modulation: https://www.allaboutcircuits.com/textbook/sem
 more about electronic speed controller calibration: https://ardupilot.org/copter/docs/esc-calibration.html\
 
 To arm the ESC's, connect the battery with minimal throttle speed (1000us).
+
+### Arduino Baud-Rate
+ 
+- Sets the datarate in bits/s for the serial communication.
+- A to small baud-rate might slow down the loop(), if many Serial.prints are executed.
 
 
 ### IMU - MP6050 (+ Magnetometer)
