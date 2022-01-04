@@ -6,7 +6,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - MPU6050 Gyroscope/Accelerometer module
 - nRF24L01 Wireless communication module
 - Power distribution board (XT60 male)
-- Electronic speed controllers : Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S 
+- Electronic speed controllers : [Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S](https://hobbyking.com/de_de/blheli-s-30a.html)
 - Motors : 2205 2300kV (brushless) 2xCW/2xCCW
 - Props 5045
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
