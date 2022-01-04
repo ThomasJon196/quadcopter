@@ -6,13 +6,13 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - MPU6050 Gyroscope/Accelerometer module
 - nRF24L01 Wireless communication module
 - Power distribution board (XT60 male)
-- Electronic speed controllers : [Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S](https://hobbyking.com/de_de/blheli-s-30a.html)
-- Motors : 2205 2300kV (brushless) 2xCW/2xCCW
+- Electronic speed controllers : [Turnigy MultiStar 30A BLHeli-S Rev16 V3 ESC 2~4S](https://hobbyking.com/de_de/blheli-s-30a.html), [Racerstar](https://de.banggood.com/4X-Racerstar-Racing-Edition-2205-BR2205-2300KV-2-4S-Brushless-Motor-For-QAV250-ZMR250-RC-Drone-FPV-Racing-p-1066837.html?cur_warehouse=CN)
+- Motors : 2205 2300kV (brushless) 2xCW/2xCCW [Turnigy](https://hobbyking.com/de_de/brushless-motor-d2205-2300kv-cw.html); [RaceStar]
 - Props 5045
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
-
+- Mount same motors.
 - Include safety condition for disarming drone (if-Case for angle)
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
 - PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
