@@ -13,9 +13,8 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 
-- Include safety switch & condition for disarming drone (Button and if-Case for angle)
-- Calibrate gyro on startup
-- Read/Write HC-05 (Bluetooth Module) for PID-Tuning
+- Include safety condition for disarming drone (if-Case for angle)
+- Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
 - PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
   - Add a proportional control to improve the rise time
   - Add a derivative control to reduce the overshoot
@@ -66,6 +65,7 @@ https://github.com/lobodol/drone-flight-controller
   - Configure DMP(Digital Motion Processor) of MPU6050
   - Calibrate Gyro (on drone startup, else wrong offsets) **TODO**
 - LOOP(AIR-Routine)   
+  - Arm(AUX1) & Disarm(AUX2) drone. 
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
   - read current angles \[pitch, roll, yaw\] from MPU6050
   - Adjust ESC pulse (currently via Servo.h)
