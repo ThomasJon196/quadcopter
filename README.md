@@ -20,6 +20,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
   - Add a derivative control to reduce the overshoot
   - Add an integral control to reduce the steady-state error
 - Copyright-rules for code from other repositories?!
+- Joystick dead-zone might be a problem.
 ---
 ### ESC calibration
 
@@ -34,7 +35,8 @@ To arm the ESC's, connect the battery with minimal throttle speed (1000us).
 ### Arduino Baud-Rate
  
 - Sets the datarate in bits/s for the serial communication.
-- A to small baud-rate might slow down the loop(), if many Serial.prints are executed.
+- A to small baud-rate might slow down the loop(), if many Serial.prints are executed. Buffer hast to be reserved for each character. If the baud-rate is slow it takes longer to send one.
+- Remove all unneccecery Serial.prints from loop(), or safe them otherweise to read later.
 
 
 ### IMU - MP6050 (+ Magnetometer)
