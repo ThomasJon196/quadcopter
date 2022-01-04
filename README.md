@@ -13,15 +13,14 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 
+- Include how to arm the motors
 - Include safety switch & condition for disarming drone (Button and if-Case for angle)
 - Calibrate gyro on startup
-- Calibrate motors/esc's
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning
 - PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
   - Add a proportional control to improve the rise time
   - Add a derivative control to reduce the overshoot
   - Add an integral control to reduce the steady-state error
-- Implement Arduino class/function for PID-Controller (currently multiplied code)
 - Copyright-rules for code from other repositories?!
 ---
 ### ESC calibration
