@@ -132,13 +132,13 @@ void dmpDataReady() {
 double yaw_error, pitch_error, roll_error; 
 double yaw_adjust, pitch_adjust, roll_adjust;
 int last_time, current_time, time_delta;
-float Kp_YPR[] = {2,2,2};
-float Ki_YPR[] = {0.001,0.001,0.001};
-float Kd_YPR[] = {10,10,10};
+//float Kp_YPR[] = {2,2,2};
+//float Ki_YPR[] = {0.001,0.001,0.001};
+//float Kd_YPR[] = {10,10,10};
 
-float Kpid_Y[] = {0.5, 0, 0};
-float Kpid_P[] = {2, 0.001, 0};
-float Kpid_R[] = {2, 0.001, 0};
+float Kpid_Y[] = {0, 0, 0};
+float Kpid_P[] = {0, 0, 0};
+float Kpid_R[] = {0, 0, 0};
 
 float last_reading[3];
 float yaw_PID[3], pitch_PID[3], roll_PID[3];
@@ -302,7 +302,7 @@ void loop() {
       resetData(receiver_data);
       Serial.println("Lost Transmitter Signal");
     }
-    throttle_input = map(receiver_data.throttle, 127, 255, 1000, 1900);
+    throttle_input = map(receiver_data.throttle, 127, 255, 1150, 1600);
     yaw_input      = map(receiver_data.yaw, 0, 255, -127, 127);
     pitch_input    = map(receiver_data.pitch, 0, 255, -127, 127);
     roll_input     = -map(receiver_data.roll, 0, 255, -127, 127); // Roll input inverted
@@ -322,6 +322,12 @@ void loop() {
     
     // GYRO
     read_gyro();
+
+    // If quadcopter is > +/- 30° on either pitch or role axis stop motors
+    if(abs(ypr[1] * 180/M_PI) > 45 or abs(ypr[2] * 180/M_PI) > 45){
+      motor_on_flag = false;
+      Serial.println("Too steep angle, motors stopped.");
+    }
     
     // PID control    
     current_time = millis();
@@ -352,8 +358,8 @@ void loop() {
     if(throttle > 1700){
       throttle = 1700;
     }
-    if(throttle < 1050){
-      throttle = 1050;
+    if(throttle < 1150){
+      throttle = 1150;
     }
 
     
@@ -416,7 +422,7 @@ void loop() {
       Serial.print("Motors stopped!");
     }
     
-//    print_info();
+    print_info();
 
     temp_time = micros();
     difference = temp_time - loop_timer;
@@ -424,19 +430,19 @@ void loop() {
 
    
         
-    Serial.print("Loop Time: ");
-    Serial.println(difference);
+    //Serial.print("Loop Time: ");
+    //Serial.println(difference);
 }
 
 
 void print_info(){
-    Serial.print("esc_1\t");
+    Serial.print("FR\t");
     Serial.print(esc_1);
-    Serial.print("esc_2\t");
+    Serial.print("RR\t");
     Serial.print(esc_2);
-    Serial.print("esc_3\t");
+    Serial.print("RL\t");
     Serial.print(esc_3);
-    Serial.print("esc_4\t");
+    Serial.print("FL\t");
     Serial.print(esc_4);
     Serial.print("throttle\t");
     Serial.println(throttle_input);

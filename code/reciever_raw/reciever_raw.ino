@@ -85,6 +85,7 @@ unsigned long now = millis();
 if ( now - lastRecvTime > 1000 ) {
 // Signal lost?
 resetData();
+Serial.println("Signal lost");
 }
 
 Serial.print("Throttle: "); Serial.print(data.throttle);  Serial.print("    ");
