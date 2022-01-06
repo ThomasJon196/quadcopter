@@ -87,20 +87,20 @@ void loop()
 //  Serial.print(" ");
   
 
-  Serial.print("Throttle: ");
-  Serial.print(data.throttle);
-  Serial.print(" ");
-  Serial.print("yaw: ");
-  Serial.print(data.yaw);
-  Serial.print(" ");
-  Serial.print("pitch: ");
-  Serial.print(data.pitch);
-  Serial.print(" ");
-  Serial.print("roll: ");
-  Serial.print(data.roll);
-  Serial.print(" ");
+//   Serial.print("Throttle: ");
+//   Serial.print(data.throttle);
+//   Serial.print(" ");
+//   Serial.print("yaw: ");
+//   Serial.print(data.yaw);
+//   Serial.print(" ");
+//   Serial.print("pitch: ");
+//   Serial.print(data.pitch);
+//   Serial.print(" ");
+//   Serial.print("roll: ");
+//   Serial.print(data.roll);
+//   Serial.print(" ");
 
-  Serial.print("\n");
+//   Serial.print("\n");
   
   radio.write(&data, sizeof(MyData));
 
