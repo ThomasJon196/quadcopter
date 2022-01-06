@@ -14,6 +14,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 ## Next steps
 - Fix Receiver signal loss problem with flight controller code.
 - Make condition to start mount motors dependent on two signals(joysticks) to reduce the probability of an error.
+- Check if the gyro works with the slightly shaking setup.
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
   - Checkout:https://forum.arduino.cc/t/how-can-i-change-the-frequency-of-servo-library/148099/3,\ 
   - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
