@@ -80,7 +80,7 @@ byte servoPin_RearLeft = 5;      // ESC Signal pin
 byte servoPin_FrontLeft = 6;        // ESC Signal pin
 Servo servo_FrontLeft, servo_RearRight, servo_FrontRight, servo_RearLeft;
 bool motor_on_flag = false;
-unsigned long loop_timer, now, period, difference;
+unsigned long loop_timer, now, period, difference, temp_time;
 
 
 // ================================================================
@@ -126,6 +126,31 @@ void dmpDataReady() {
 
 
 // ================================================================
+// ===               PID Control Variables                      ===
+// ================================================================
+// Variables for PID control (have to be tuned)
+double yaw_error, pitch_error, roll_error; 
+double yaw_adjust, pitch_adjust, roll_adjust;
+int last_time, current_time, time_delta;
+float Kp_YPR[] = {2,2,2};
+float Ki_YPR[] = {0.001,0.001,0.001};
+float Kd_YPR[] = {10,10,10};
+
+float Kpid_Y[] = {0.5, 0, 0};
+float Kpid_P[] = {2, 0.001, 0};
+float Kpid_R[] = {2, 0.001, 0};
+
+float last_reading[3];
+float yaw_PID[3], pitch_PID[3], roll_PID[3];
+float integrated_error_yaw;
+float integrated_error_pitch;
+float integrated_error_roll;
+float esc_1, esc_2, esc_3, esc_4;
+float throttle;
+int AUX_2_counter;
+
+
+// ================================================================
 // ===                      INITIAL SETUP                       ===
 // ================================================================
 
@@ -135,6 +160,16 @@ void setup() {
     servo_RearRight.attach(servoPin_RearRight);
     servo_RearLeft.attach(servoPin_RearLeft);
     servo_FrontLeft.attach(servoPin_FrontLeft);
+
+    esc_1 = 1000;
+    esc_2 = 1000;
+    esc_3 = 1000;
+    esc_4 = 1000;
+    
+    servo_FrontRight.writeMicroseconds(esc_1); 
+    servo_RearRight.writeMicroseconds(esc_2);  
+    servo_RearLeft.writeMicroseconds(esc_3);   
+    servo_FrontLeft.writeMicroseconds(esc_4);
 
     // Set Reciever
     resetData(receiver_data);
@@ -236,26 +271,7 @@ void setup() {
     loop_timer = micros();
 }
 
-// Variables for PID control (have to be tuned)
-double yaw_error, pitch_error, roll_error; 
-double yaw_adjust, pitch_adjust, roll_adjust;
-int last_time, current_time, time_delta;
-float Kp_YPR[] = {2,2,2};
-float Ki_YPR[] = {0.001,0.001,0.001};
-float Kd_YPR[] = {10,10,10};
 
-float Kpid_Y[] = {0.5, 0, 0};
-float Kpid_P[] = {2, 0.001, 0};
-float Kpid_R[] = {2, 0.001, 0};
-
-float last_reading[3];
-float yaw_PID[3], pitch_PID[3], roll_PID[3];
-float integrated_error_yaw;
-float integrated_error_pitch;
-float integrated_error_roll;
-float esc_1, esc_2, esc_3, esc_4;
-float throttle;
-int AUX_2_counter;
 
 void read_gyro()
 {
@@ -283,7 +299,8 @@ void loop() {
     //Here we check if we've lost signal, if we did we reset the values 
     if ( now - lastRecvTime > 1000 ) {
     // Signal lost?
-    resetData(receiver_data);
+      resetData(receiver_data);
+      Serial.println("Lost Transmitter Signal");
     }
     throttle_input = map(receiver_data.throttle, 127, 255, 1000, 1900);
     yaw_input      = map(receiver_data.yaw, 0, 255, -127, 127);
@@ -367,17 +384,22 @@ void loop() {
 
            
 
-    // blink LED to indicate activity
-    blinkState = !blinkState;
-    digitalWrite(LED_PIN, blinkState);
     
     
     if(motor_on_flag){
-      
+//      esc_1 = 1030;
+//      esc_2 = 1030;
+//      esc_3 = 1030;
+//      esc_4 = 1030;
       servo_FrontRight.writeMicroseconds(esc_1); 
       servo_RearRight.writeMicroseconds(esc_2);  
       servo_RearLeft.writeMicroseconds(esc_3);   
       servo_FrontLeft.writeMicroseconds(esc_4);
+
+      // blink LED to indicate activity
+      blinkState = !blinkState;
+      digitalWrite(LED_PIN, blinkState);
+    
       
       //applyMotorSpeed();  
     }else{
@@ -394,11 +416,11 @@ void loop() {
       Serial.print("Motors stopped!");
     }
     
-    //print_info();
+//    print_info();
 
-    now = micros();
-    difference = now - loop_timer;
-    loop_timer = now;
+    temp_time = micros();
+    difference = temp_time - loop_timer;
+    loop_timer = temp_time;
 
    
         
