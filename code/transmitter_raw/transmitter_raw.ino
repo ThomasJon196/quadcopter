@@ -2,8 +2,9 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 
-/*Create a unique pipe out. The receiver has to 
-  wear the same unique code*/
+/*
+The receiver needs the same unique code
+*/
   
 const uint64_t pipeOut = 0xE8E8F0F0E1LL; //IMPORTANT: The same as in the receiver
 
@@ -22,11 +23,9 @@ struct MyData {
 
 MyData data;
 
-void resetData() 
+void init_Data() 
 {
-  //This are the start values of each channal
-  // Throttle is 0 in order to stop the motors
-  //127 is the middle value of the 10ADC.
+  // Initial values
     
   data.throttle = 0;
   data.yaw = 127;
@@ -44,7 +43,7 @@ void setup()
   radio.setAutoAck(false);
   radio.setDataRate(RF24_250KBPS);
   radio.openWritingPipe(pipeOut);
-  resetData();
+  init_Data();
 }
 
 /**************************************************/
@@ -64,13 +63,13 @@ int mapJoystickValues(int val, int lower, int middle, int upper, bool reverse)
 
 void loop()
 {
-  // The calibration numbers used here should be measured 
-  // for your joysticks till they send the correct values.
+  // Min,Middle,Max,(invert) for each joystick.
+  // Measure the real values with print(analogRead()). Differ for each joystick.
   data.throttle = mapJoystickValues( analogRead(A3), 1, 524, 1018, false );
   data.yaw      = mapJoystickValues( analogRead(A2),  8, 505, 1018, false );
   data.pitch    = mapJoystickValues( analogRead(A1), 4, 490, 1018, false );
   data.roll     = mapJoystickValues( analogRead(A0), 3, 515, 1019, false );
-  data.AUX1     = digitalRead(3); //The 2 toggle switches
+  data.AUX1     = digitalRead(3); 
   data.AUX2     = digitalRead(4);
 
 //  Print analogRead(.) for calibration...
