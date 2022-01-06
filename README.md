@@ -27,6 +27,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
   - Add an integral control to reduce the steady-state error
 - Copyright-rules for code from other repositories?!
 - Joystick dead-zone might be a problem.
+- Install battery mount.
 ---
 ### ESC calibration
 
