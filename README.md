@@ -13,6 +13,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 
+- Solder Capacitor to nRF24 modules
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
   - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
 - Mount same motors.
