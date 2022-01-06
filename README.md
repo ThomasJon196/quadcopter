@@ -12,6 +12,8 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
+
+- Solder Capacitor to nRF24 modules
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
   - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
 - Mount same motors.
@@ -63,6 +65,11 @@ Usefull websites:
 Similar projects: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf\\
 https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e\\
 https://github.com/lobodol/drone-flight-controller
+
+Features that effect minimal loop time/refresh rate of flight controller: [more info](https://oscarliang.com/best-looptime-flight-controller/)
+- ESC's refresh rate. When max pulse is 2ms loop cant refresh motor speed faster.
+- Gyro refresh rate & low pass filter(introduces delay)
+
 
 #### Flight controller procedure/features
 - SETUP
