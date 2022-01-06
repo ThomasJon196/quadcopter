@@ -13,11 +13,11 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 - Fix Receiver signal loss problem with flight controller code.
+- Make condition to start mount motors dependent on two signals(joysticks) to reduce the probability of an error.
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
   - Checkout:https://forum.arduino.cc/t/how-can-i-change-the-frequency-of-servo-library/148099/3,\ 
   - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
 - Mount same motors as when quadcopter is no longer fixed along one axis.
-- Include safety condition for disarming drone (if-Case for angle)
 - Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
 - PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
   - Add a proportional control to improve the rise time
