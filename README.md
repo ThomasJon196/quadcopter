@@ -13,6 +13,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 
 ## Next steps
 - Fix Receiver signal loss problem with flight controller code.
+  - Possible settings: Transmitter AutoAcknoledge, DataRate... other settings
 - Make prototypeboard to place gyro in the center of geometry/mass.
 - Make condition to start mount motors dependent on two signals(joysticks) to reduce the probability of an error.
 - Check if the gyro works with the slightly shaking setup.
