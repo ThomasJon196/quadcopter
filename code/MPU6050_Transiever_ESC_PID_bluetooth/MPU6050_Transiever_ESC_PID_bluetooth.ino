@@ -27,6 +27,9 @@ THE SOFTWARE.
 ===============================================
 */
 
+
+#define PITCH_ROLL_INVERTED 1 // true = 1, false = 0
+
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
@@ -105,6 +108,8 @@ struct MyData {
 };
 MyData receiver_data;
 
+#define MIN_THROTTLE 1200 // In RPM
+#define MAX_THROTTLE 1800 // In RPM
 
 // ================================================================
 // ===                     Bluetooth - SETUP                    ===
@@ -273,6 +278,64 @@ void setup() {
 
 
 
+
+
+void loop() {
+    unsigned long now = millis();
+    
+    read_receiver();
+
+
+    update_motor_flags();
+
+    if(motor_on_flag){
+        // GYRO
+        read_gyro();
+
+        
+        // calc. vars for pid-controll (yaw, pitch, roll, (time_delta))   
+        calc_YPR();
+    
+        // Calc each P,I,D-value for yaw, pitch, roll
+        yaw_adjust = calc_pid(Kpid_Y, yaw_error, integrated_error_yaw, last_reading[0], time_delta);
+        pitch_adjust = calc_pid(Kpid_P, pitch_error, integrated_error_pitch, last_reading[1], time_delta);
+        roll_adjust = calc_pid(Kpid_R, roll_error, integrated_error_roll, last_reading[2], time_delta);  
+    
+        last_reading[0] = yaw_error;
+        last_reading[1] = pitch_error;
+        last_reading[2] = roll_error;
+
+        calc_esc_pwm_signal();
+
+        write_pwm_toESC_servo();
+
+        //applyMotorSpeed();
+
+        // Blink LED if motor is running
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+    }else{
+        // Sets PWM-signal on MIN_THROTTLE
+        set_pwm_signal_low();
+        
+        write_pwm_toESC_servo();
+
+        //applyMotorSpeed();
+    }
+    
+    print_esc_info();
+
+    temp_time = micros();
+    difference = temp_time - loop_timer;
+    loop_timer = temp_time;
+
+   
+        
+    //Serial.print("Loop Time: ");
+    //Serial.println(difference);
+}
+
+
 void read_gyro()
 {
   // if programming failed, don't try to do anything
@@ -291,24 +354,12 @@ void read_gyro()
   }
 }
 
-void loop() {
-    unsigned long now = millis();
-    // Recieve from nRF24L01
-    recvData(receiver_data);
-    
-    //Here we check if we've lost signal, if we did we reset the values 
-    if ( now - lastRecvTime > 1000 ) {
-    // Signal lost?
-      resetData(receiver_data);
-      Serial.println("Lost Transmitter Signal");
-    }
-    throttle_input = map(receiver_data.throttle, 127, 255, 1150, 1600);
-    yaw_input      = map(receiver_data.yaw, 0, 255, -127, 127);
-    pitch_input    = map(receiver_data.pitch, 0, 255, -127, 127);
-    roll_input     = -map(receiver_data.roll, 0, 255, -127, 127); // Roll input inverted
 
-    if(pitch_input > 115 and throttle_input < 900){ // Turn of motor if pitch all the way up and throttle all the way down
-      motor_on_flag = false;
+
+
+void update_motor_flags(){
+    if(pitch_input > 115 and throttle_input < MIN_THROTTLE - 100){ // Turn of motor if pitch all the way up and throttle all the way down + puffer-zone
+      motor_on_flag = true;
     }
     
 
@@ -318,51 +369,32 @@ void loop() {
     if(receiver_data.AUX1 == 1){
       motor_on_flag = true;
     }
-    
-    
-    // GYRO
-    read_gyro();
 
     // If quadcopter is > +/- 30° on either pitch or role axis stop motors
     if(abs(ypr[1] * 180/M_PI) > 45 or abs(ypr[2] * 180/M_PI) > 45){
       motor_on_flag = false;
       Serial.println("Too steep angle, motors stopped.");
     }
-    
-    // PID control    
+}
+
+void calc_YPR()
+{
     current_time = millis();
     time_delta   = current_time - last_time;
     last_time = current_time;
     yaw_error = yaw_input - ypr[0] * 180/M_PI;
 
-    if(!pitch_roll_inverted){
+    if(PITCH_ROLL_INVERTED){
       pitch_error = pitch_input - ypr[1] * 180/M_PI;
       roll_error = roll_input - ypr[2] * 180/M_PI;
     }else{
       pitch_error = pitch_input - ypr[2] * 180/M_PI;
       roll_error = roll_input - ypr[1] * 180/M_PI;
     }
+}
 
-    // Calc each P,I,D-value for yaw, pitch, roll
-    yaw_adjust = calc_pid(Kpid_Y, yaw_error, integrated_error_yaw, last_reading[0], time_delta);
-    pitch_adjust = calc_pid(Kpid_P, pitch_error, integrated_error_pitch, last_reading[1], time_delta);
-    roll_adjust = calc_pid(Kpid_R, roll_error, integrated_error_roll, last_reading[2], time_delta);  
-    
-        
-    last_reading[0] = yaw_error;
-    last_reading[1] = pitch_error;
-    last_reading[2] = roll_error;
-    
-
-    throttle = throttle_input; // Hover speed. Have to be adjusted (Or automatically calculated)
-    if(throttle > 1700){
-      throttle = 1700;
-    }
-    if(throttle < 1150){
-      throttle = 1150;
-    }
-
-    
+void calc_esc_pwm_signal()
+{
     esc_1 = throttle - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
     esc_2 = throttle + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
     esc_3 = throttle + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
@@ -387,55 +419,26 @@ void loop() {
     }else if(esc_4 < 1050){
       esc_4 = 1050;
     }
-
-           
-
-    
-    
-    if(motor_on_flag){
-//      esc_1 = 1030;
-//      esc_2 = 1030;
-//      esc_3 = 1030;
-//      esc_4 = 1030;
-      servo_FrontRight.writeMicroseconds(esc_1); 
-      servo_RearRight.writeMicroseconds(esc_2);  
-      servo_RearLeft.writeMicroseconds(esc_3);   
-      servo_FrontLeft.writeMicroseconds(esc_4);
-
-      // blink LED to indicate activity
-      blinkState = !blinkState;
-      digitalWrite(LED_PIN, blinkState);
-    
-      
-      //applyMotorSpeed();  
-    }else{
-      esc_1 = 1000;
-      esc_2 = 1000;
-      esc_3 = 1000;
-      esc_4 = 1000;
-      
-      servo_FrontRight.writeMicroseconds(esc_1); 
-      servo_RearRight.writeMicroseconds(esc_2);  
-      servo_RearLeft.writeMicroseconds(esc_3);   
-      servo_FrontLeft.writeMicroseconds(esc_4);
-      //applyMotorSpeed();  
-      Serial.print("Motors stopped!");
-    }
-    
-    print_info();
-
-    temp_time = micros();
-    difference = temp_time - loop_timer;
-    loop_timer = temp_time;
-
-   
-        
-    //Serial.print("Loop Time: ");
-    //Serial.println(difference);
 }
 
 
-void print_info(){
+void write_pwm_toESC_servo()
+{
+    servo_FrontRight.writeMicroseconds(esc_1); 
+    servo_RearRight.writeMicroseconds(esc_2);  
+    servo_RearLeft.writeMicroseconds(esc_3);   
+    servo_FrontLeft.writeMicroseconds(esc_4);   
+}
+
+void set_pwm_signal_low()
+{
+    esc_1 = 1000;
+    esc_2 = 1000;
+    esc_3 = 1000;
+    esc_4 = 1000;
+}
+
+void print_esc_info(){
     Serial.print("FR\t");
     Serial.print(esc_1);
     Serial.print("RR\t");
