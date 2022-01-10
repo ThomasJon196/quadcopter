@@ -8,8 +8,17 @@
 - To counter the torque on the drone 2 clockwise and 2 counter-clockwise motors are required. Else the drone will sping around the yaw-axis.
 
 #### PID-Controller
+What is a PID-Controller and how is it used?
+- A PID-Controller adjusts the controlling mechanism of a system, to converge to a desired system-state.\
+- In this case:
+  - System: Quadcopter
+  - Controlling mechanism: Motors/Electronic Speed Controller
+  - System-State: Orientation of quadcopter (yaw, pitch, roll)-angles
+- The PID-C calculates how the motor speed has to be changed, to reach a desired (yaw, pitch, roll)-angle-orientation of the quadcopter. For hovering that would be (0, 0, 0). (or (x, 0, 0) since hovering can be achieved without fixing the vertical-yaw-axis)
+
 - Is the time_delta term required for D-Controller?
 Nope. Should be ~constant.
+
 
 ##### Gyroscope
 - How does slight shaking influence Gyro calibration?
