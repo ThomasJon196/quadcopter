@@ -142,8 +142,8 @@ int last_time, current_time, time_delta;
 //float Kd_YPR[] = {10,10,10};
 
 float Kpid_Y[] = {0, 0, 0};
-float Kpid_P[] = {0, 0, 0};
-float Kpid_R[] = {0, 0, 0};
+float Kpid_P[] = {1.5, 0, 0};
+float Kpid_R[] = {1.5, 0, 0};
 
 float last_reading[3];
 float yaw_PID[3], pitch_PID[3], roll_PID[3];
@@ -290,7 +290,7 @@ void loop() {
         //applyMotorSpeed();
     }
 
-//    print_ypr();
+    //print_ypr();
     
     print_esc_info();
 
@@ -361,10 +361,10 @@ void calc_YPR()
 
 void calc_esc_pwm_signal()
 {
-    esc_1 = throttle_input - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
-    esc_2 = throttle_input + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
-    esc_3 = throttle_input + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
-    esc_4 = throttle_input - pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
+    esc_1 = throttle_input + pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
+    esc_2 = throttle_input - pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
+    esc_3 = throttle_input - pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
+    esc_4 = throttle_input + pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
     if(esc_1 > 1800){
       esc_1 = 1800;
     }else if(esc_1 < 1050){
