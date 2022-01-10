@@ -1,5 +1,8 @@
 ### Problems i came across:
 
+#### Serial port busy
+- When Arduino expects Serial input, one can not write code to it.-> RESTART
+
 
 #### Motors
 - To counter the torque on the drone 2 clockwise and 2 counter-clockwise motors are required. Else the drone will sping around the yaw-axis.
