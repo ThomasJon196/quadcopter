@@ -12,25 +12,18 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
-- Refactor code in setup() function of flight controller.
-- Is the time_delta required in the D-Controller? If loop runs with constant time should just be a constant.
-- Fix Receiver signal loss problem with flight controller code.
-  - Possible settings: Transmitter AutoAcknoledge, DataRate... other settings
+- Tune PID parameters.
+- Refactor code in setup() function of flight controller: Rewrite mpu_setup
+- Understand Transmitter AutoAcknoledge, DataRate... other settings
 - Make prototypeboard to place gyro in the center of geometry/mass.
 - Make condition to start mount motors dependent on two signals(joysticks) to reduce the probability of an error.
-- Check if the gyro works with the slightly shaking setup.
 - Servo.h only works with 50Hz, Need higher refresh rate for a stable drone: https://forum.arduino.cc/t/adjusting-pwm-frequency/45204
   - Checkout:https://forum.arduino.cc/t/how-can-i-change-the-frequency-of-servo-library/148099/3,\ 
   - But writing directly to the outputpins and simulating the pwm pulse doesnt work yet (applaySpeed())
-- Mount same motors as when quadcopter is no longer fixed along one axis.
-- Read/Write HC-05 (Bluetooth Module) for PID-Tuning (maximal baud-rate for HC-05?)
-- PID Tuning **Fix quadcopter along 1 axis e.g. only pitch or roll** -> example:https://www.youtube.com/watch?v=yvame7QLWbo
-  - Add a proportional control to improve the rise time
-  - Add a derivative control to reduce the overshoot
-  - Add an integral control to reduce the steady-state error
 - Copyright-rules for code from other repositories?!
 - Joystick dead-zone might be a problem.
 - Install battery mount.
+- Measure batteries voltage drop.
 ---
 ### ESC calibration
 

@@ -7,6 +7,15 @@
 #### Motors
 - To counter the torque on the drone 2 clockwise and 2 counter-clockwise motors are required. Else the drone will sping around the yaw-axis.
 
+#### PID-Controller
+- Is the time_delta term required for D-Controller?
+Nope. Should be ~constant.
+
+##### Gyroscope
+- How does slight shaking influence Gyro calibration?
+Should cancel itself out.
+
+
 #### Communication
 - The Transmitter&Receiver regulary lose signal : 
   - The cause may be current surges/drops. This this can be solved by soldering a capacitor to the nRF24 modules VSS & ground pin.
