@@ -108,7 +108,7 @@ struct MyData {
 };
 MyData receiver_data;
 
-#define MIN_THROTTLE 1200 // In RPM
+#define MIN_THROTTLE 1050 // In RPM
 #define MAX_THROTTLE 1800 // In RPM
 
 // ================================================================
@@ -151,13 +151,14 @@ float integrated_error_yaw;
 float integrated_error_pitch;
 float integrated_error_roll;
 float esc_1, esc_2, esc_3, esc_4;
-float throttle;
 int AUX_2_counter;
 
 
 // ================================================================
 // ===                      INITIAL SETUP                       ===
 // ================================================================
+
+
 
 void setup() {
     // Set ESC pins
@@ -185,88 +186,19 @@ void setup() {
     //we start the radio comunication
     radio.startListening();
 
-    // join I2C bus (I2Cdev library doesn't do this automatically)
-    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-        Wire.begin();
-        Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
-    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
-        Fastwire::setup(400, true);
-    #endif
+    
 
    
     // initialize bluetooth serial communication
     Serial.begin(230400);
-    Serial.println("Hallo vom Bluetooth Modul");
+    //Serial.println("Hallo vom Bluetooth Modul");
 
     
-    // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
-    // Pro Mini running at 3.3V, cannot handle this baud rate reliably due to
-    // the baud timing being too misaligned with processor ticks. You must use
-    // 38400 or slower in these cases, or use some kind of external separate
-    // crystal solution for the UART timer.
+    
+    setup_mpu6050();
+    
 
-    // initialize device
-    Serial.println(F("Initializing I2C devices..."));
-    mpu.initialize();
-    //pinMode(INTERRUPT_PIN, INPUT);
-
-    // verify connection
-    Serial.println(F("Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
-
-    // wait for ready
-    //Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-    //while (Serial.available() && Serial.read()); // empty buffer
-    //while (!Serial.available());                 // wait for data
-    //Serial.println(F("\nTurn pitch all the way up: "));
-    recvData(receiver_data);
-    while (!(receiver_data.pitch > 230)){
-      recvData(receiver_data);// wait for Max pitch signal
-    }
-    //while (Serial.available() && Serial.read()); // empty buffer again
-
-    // load and configure the DMP
-    Serial.println(F("Initializing DMP..."));
-    devStatus = mpu.dmpInitialize();
-
-    // supply your own gyro offsets here, scaled for min sensitivity
-    mpu.setXGyroOffset(-93);
-    mpu.setYGyroOffset(115);
-    mpu.setZGyroOffset(381);
-    mpu.setZAccelOffset(773); // 1688 factory default for my test chip
-
-    // make sure it worked (returns 0 if so)
-    if (devStatus == 0) {
-        // Calibration Time: generate offsets and calibrate our MPU6050
-        mpu.CalibrateAccel(6);
-        mpu.CalibrateGyro(6);
-        mpu.PrintActiveOffsets();
-        // turn on the DMP, now that it's ready
-        Serial.println(F("Enabling DMP..."));
-        mpu.setDMPEnabled(true);
-
-        // enable Arduino interrupt detection
-        Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
-        Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
-        Serial.println(F(")..."));
-        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-        mpuIntStatus = mpu.getIntStatus();
-
-        // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        Serial.println(F("DMP ready! Waiting for first interrupt..."));
-        dmpReady = true;
-
-        // get expected DMP packet size for later comparison
-        packetSize = mpu.dmpGetFIFOPacketSize();
-    } else {
-        // ERROR!
-        // 1 = initial memory load failed
-        // 2 = DMP configuration updates failed
-        // (if it's going to break, usually the code will be 1)
-        Serial.print(F("DMP Initialization failed (code "));
-        Serial.print(devStatus);
-        Serial.println(F(")"));
-    }
+    
 
     // configure LED for output
     pinMode(LED_PIN, OUTPUT);
@@ -274,27 +206,62 @@ void setup() {
 
     period = 4000;
     loop_timer = micros();
+
+    
+}
+
+void read_receiver(){
+
+    // Recieve from nRF24L01
+    recvData(receiver_data);
+    unsigned long now = millis();
+    //Here we check if we've lost signal, if we did we reset the values 
+    if ( now - lastRecvTime > 1000 ) {
+    // Signal lost?
+      resetData(receiver_data);
+      Serial.println("Lost Transmitter Signal");
+    }
+    
+    
+    throttle_input = map(receiver_data.throttle, 127, 255, MIN_THROTTLE, MAX_THROTTLE);
+    yaw_input      = map(receiver_data.yaw, 0, 255, -127, 127);
+    pitch_input    = map(receiver_data.pitch, 0, 255, -127, 127);
+    roll_input     = -map(receiver_data.roll, 0, 255, -127, 127); // Roll input inverted
+
+
+    if(throttle_input > MAX_THROTTLE){
+      throttle_input = MAX_THROTTLE;
+    }
+    if(throttle_input < MIN_THROTTLE){
+      throttle_input = MIN_THROTTLE;
+    }
+}
+
+void recvData(MyData &receiver_data)
+{
+  while ( radio.available() ) {
+    radio.read(&receiver_data, sizeof(MyData));
+    lastRecvTime = millis(); //here we receive the data
+  }
 }
 
 
-
-
-
 void loop() {
-    unsigned long now = millis();
+    
+
+    
     
     read_receiver();
 
-
+    read_gyro();
+    // calc. vars for pid-controll (yaw, pitch, roll, (time_delta))   
+    calc_YPR();
+    
     update_motor_flags();
 
     if(motor_on_flag){
-        // GYRO
-        read_gyro();
-
         
-        // calc. vars for pid-controll (yaw, pitch, roll, (time_delta))   
-        calc_YPR();
+        
     
         // Calc each P,I,D-value for yaw, pitch, roll
         yaw_adjust = calc_pid(Kpid_Y, yaw_error, integrated_error_yaw, last_reading[0], time_delta);
@@ -322,15 +289,14 @@ void loop() {
 
         //applyMotorSpeed();
     }
+
+//    print_ypr();
     
     print_esc_info();
 
-    temp_time = micros();
-    difference = temp_time - loop_timer;
-    loop_timer = temp_time;
-
-   
-        
+//    temp_time = micros();
+//    difference = temp_time - loop_timer;
+//    loop_timer = temp_time;
     //Serial.print("Loop Time: ");
     //Serial.println(difference);
 }
@@ -395,10 +361,10 @@ void calc_YPR()
 
 void calc_esc_pwm_signal()
 {
-    esc_1 = throttle - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
-    esc_2 = throttle + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
-    esc_3 = throttle + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
-    esc_4 = throttle - pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
+    esc_1 = throttle_input - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
+    esc_2 = throttle_input + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
+    esc_3 = throttle_input + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
+    esc_4 = throttle_input - pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
     if(esc_1 > 1800){
       esc_1 = 1800;
     }else if(esc_1 < 1050){
@@ -449,6 +415,100 @@ void print_esc_info(){
     Serial.print(esc_4);
     Serial.print("throttle\t");
     Serial.println(throttle_input);
+}
+
+void print_ypr()
+{
+  Serial.print("Yaw: ");
+  Serial.print(ypr[0] * 180/M_PI);
+  Serial.print("Pitch: ");
+  Serial.print(ypr[1] * 180/M_PI);
+  Serial.print("Roll: ");
+  Serial.println(ypr[2] * 180/M_PI);
+ 
+}
+
+void setup_mpu6050()
+{
+    // join I2C bus (I2Cdev library doesn't do this automatically)
+    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+        Wire.begin();
+        Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+        Fastwire::setup(400, true);
+    #endif
+
+
+    // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
+    // Pro Mini running at 3.3V, cannot handle this baud rate reliably due to
+    // the baud timing being too misaligned with processor ticks. You must use
+    // 38400 or slower in these cases, or use some kind of external separate
+    // crystal solution for the UART timer.
+
+
+    // initialize device
+    Serial.println(F("Initializing I2C devices..."));
+    mpu.initialize();
+    //pinMode(INTERRUPT_PIN, INPUT);
+
+    // verify connection
+    Serial.println(F("Testing device connections..."));
+    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+
+
+    // wait for ready
+    //Serial.println(F("\nSend any character to begin DMP programming and demo: "));
+    //while (Serial.available() && Serial.read()); // empty buffer
+    //while (!Serial.available());                 // wait for data
+    //Serial.println(F("\nTurn pitch all the way up: "));
+    recvData(receiver_data);
+    while (!(receiver_data.pitch > 230)){
+      recvData(receiver_data);// wait for Max pitch signal
+    }
+    //while (Serial.available() && Serial.read()); // empty buffer again
+
+    // load and configure the DMP
+    Serial.println(F("Initializing DMP..."));
+    devStatus = mpu.dmpInitialize();
+
+    // supply your own gyro offsets here, scaled for min sensitivity
+    mpu.setXGyroOffset(-93);
+    mpu.setYGyroOffset(115);
+    mpu.setZGyroOffset(381);
+    mpu.setZAccelOffset(773); // 1688 factory default for my test chip
+
+    // make sure it worked (returns 0 if so)
+    if (devStatus == 0) {
+        // Calibration Time: generate offsets and calibrate our MPU6050
+        mpu.CalibrateAccel(6);
+        mpu.CalibrateGyro(6);
+        mpu.PrintActiveOffsets();
+        // turn on the DMP, now that it's ready
+        Serial.println(F("Enabling DMP..."));
+        mpu.setDMPEnabled(true);
+
+        // enable Arduino interrupt detection
+        Serial.print(F("Enabling interrupt detection (Arduino external interrupt "));
+        Serial.print(digitalPinToInterrupt(INTERRUPT_PIN));
+        Serial.println(F(")..."));
+        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+        mpuIntStatus = mpu.getIntStatus();
+
+        // set our DMP Ready flag so the main loop() function knows it's okay to use it
+        Serial.println(F("DMP ready! Waiting for first interrupt..."));
+        dmpReady = true;
+
+        // get expected DMP packet size for later comparison
+        packetSize = mpu.dmpGetFIFOPacketSize();
+    } else {
+        // ERROR!
+        // 1 = initial memory load failed
+        // 2 = DMP configuration updates failed
+        // (if it's going to break, usually the code will be 1)
+        Serial.print(F("DMP Initialization failed (code "));
+        Serial.print(devStatus);
+        Serial.println(F(")"));
+    }
 }
 
 /*
