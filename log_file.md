@@ -22,7 +22,7 @@ PID explained:
 - I(ntegral)
 - D(erivative) [source](https://oscarliang.com/excessive-d-gain-cause-oscillations-motor-overheat/)
 
-PID-Tuning: [source](https://oscarliang.com/excessive-d-gain-cause-oscillations-motor-overheat/)
+PID-Tuning: [source](https://oscarliang.com/quadcopter-pid-explained-tuning/)
 
 
 Is the time_delta term required for the derivative-term?
