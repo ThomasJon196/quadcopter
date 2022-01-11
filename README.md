@@ -77,8 +77,9 @@ Features that effect minimal loop time/refresh rate of flight controller: [more 
 - LOOP(AIR-Routine)   
   - Arm(AUX1) & Disarm(AUX2) drone. 
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
-  - read current angles \[pitch, roll, yaw\] from MPU6050
-  - Adjust ESC pulse (currently via Servo.h)
+  - calc current angles \[pitch, roll, yaw\] from MPU6050
+  - calc PID-Terms for each angle
+  - Adjust ESC pulse (currently via Servo.h) based in PID-terms
   - (integrate battery voltage) **TODO**
 
 ---
