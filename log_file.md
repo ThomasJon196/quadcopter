@@ -29,19 +29,19 @@ Is the time_delta term required for the derivative-term?
 - Nope. Should be ~constant.
 
 
-
-
 ### Gyroscope
 - How does slight shaking influence Gyro calibration?
 Should cancel itself out.
 
 
 ### Communication
+
 - The Transmitter&Receiver regulary lose signal : 
   - The cause may be current surges/drops. This this can be solved by soldering a capacitor to the nRF24 modules VSS & ground pin.
   - Test with receiver_raw.ino works fine. Must be a problem in the flight controller code.
   - timer variables were not set properly for lost signal identification.
-  - 
+
+
 ### License
 
 If you find software that doesn’t have a license, that generally means you have no permission from the creators of the software to use, modify, or share the software. Although a code host such as GitHub may allow you to view and fork the code, this does not imply that you are permitted to use, modify, or share the software for any purpose.
