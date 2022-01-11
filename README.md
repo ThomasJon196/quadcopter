@@ -12,6 +12,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
+- Checkout another interseting similar project.
 - Tune PID parameters.[LINK](https://www.technik-consulting.eu/en/optimizing/drone_PID-optimizing.html)
 - Refactor code in setup() function of flight controller: Rewrite mpu_setup
 - Understand Transmitter AutoAcknoledge, DataRate... other settings
