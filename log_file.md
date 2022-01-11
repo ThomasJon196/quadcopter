@@ -20,7 +20,7 @@ PID explained:
 
 - P(roportional)
 - I(ntegral)
-- D(erivative)
+- D(erivative) [source](https://oscarliang.com/excessive-d-gain-cause-oscillations-motor-overheat/)
 
 PID-Tuning: [source](https://oscarliang.com/excessive-d-gain-cause-oscillations-motor-overheat/)
 
