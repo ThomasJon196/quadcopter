@@ -3,6 +3,9 @@
 ### Serial port busy
 - When Arduino expects Serial input, one can not write code to it.-> RESTART
 
+### Input and Output with Pulse width modulation (PWM)
+- Input [source](http://www.benripley.com/diy/arduino/three-ways-to-read-a-pwm-signal-with-arduino/)
+- Output 
 
 ### Motors
 - To counter the torque on the drone 2 clockwise and 2 counter-clockwise motors are required. Else the drone will sping around the yaw-axis.
