@@ -141,9 +141,9 @@ int last_time, current_time, time_delta;
 //float Ki_YPR[] = {0.001,0.001,0.001};
 //float Kd_YPR[] = {10,10,10};
 
-float Kpid_Y[] = {0, 0, 0};
-float Kpid_P[] = {1.5, 0, 0};
-float Kpid_R[] = {1.5, 0, 0};
+float Kpid_Y[] = {0.5, 0, 0};
+float Kpid_P[] = {2.5, 0, 40};
+float Kpid_R[] = {2.5, 0, 40};
 
 float last_reading[3];
 float yaw_PID[3], pitch_PID[3], roll_PID[3];
@@ -224,9 +224,9 @@ void read_receiver(){
     
     
     throttle_input = map(receiver_data.throttle, 127, 255, MIN_THROTTLE, MAX_THROTTLE);
-    yaw_input      = map(receiver_data.yaw, 0, 255, -127, 127);
-    pitch_input    = map(receiver_data.pitch, 0, 255, -127, 127);
-    roll_input     = -map(receiver_data.roll, 0, 255, -127, 127); // Roll input inverted
+    yaw_input      = -map(receiver_data.yaw, 0, 255, -45, 45);
+    pitch_input    = -map(receiver_data.pitch, 0, 255, -45, 45);
+    roll_input     = -map(receiver_data.roll, 0, 255, -45, 45); // Roll input inverted
 
 
     if(throttle_input > MAX_THROTTLE){
@@ -245,7 +245,22 @@ void recvData(MyData &receiver_data)
   }
 }
 
+float p_term, i_term, d_term;
 
+
+float calc_pid(float Kpid[], float error, float &integrated_error, float &last_reading, int time_delta)
+{
+  p_term = Kpid[0] * error;
+
+  integrated_error = integrated_error + error;
+  i_term = Kpid[1] * integrated_error;
+  
+  d_term = Kpid[2] * (error - last_reading); // /time_delta;
+
+  last_reading = error;
+  
+  return p_term + i_term + d_term;
+}
 void loop() {
     
 
@@ -267,10 +282,7 @@ void loop() {
         yaw_adjust = calc_pid(Kpid_Y, yaw_error, integrated_error_yaw, last_reading[0], time_delta);
         pitch_adjust = calc_pid(Kpid_P, pitch_error, integrated_error_pitch, last_reading[1], time_delta);
         roll_adjust = calc_pid(Kpid_R, roll_error, integrated_error_roll, last_reading[2], time_delta);  
-    
-        last_reading[0] = yaw_error;
-        last_reading[1] = pitch_error;
-        last_reading[2] = roll_error;
+        
 
         calc_esc_pwm_signal();
 
@@ -292,13 +304,11 @@ void loop() {
 
     //print_ypr();
     
-    print_esc_info();
+    //print_esc_info();
 
-//    temp_time = micros();
-//    difference = temp_time - loop_timer;
-//    loop_timer = temp_time;
-    //Serial.print("Loop Time: ");
-    //Serial.println(difference);
+    //print_loop_time();
+
+    
 }
 
 
@@ -361,10 +371,10 @@ void calc_YPR()
 
 void calc_esc_pwm_signal()
 {
-    esc_1 = throttle_input + pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
-    esc_2 = throttle_input - pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
-    esc_3 = throttle_input - pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
-    esc_4 = throttle_input + pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
+    esc_1 = throttle_input + pitch_adjust - roll_adjust + yaw_adjust; //Calculate the pulse for esc 1 (front-right - CCW)
+    esc_2 = throttle_input - pitch_adjust - roll_adjust - yaw_adjust; //Calculate the pulse for esc 2 (rear-right - CW)
+    esc_3 = throttle_input - pitch_adjust + roll_adjust + yaw_adjust; //Calculate the pulse for esc 3 (rear-left - CCW)
+    esc_4 = throttle_input + pitch_adjust + roll_adjust - yaw_adjust; //Calculate the pulse for esc 4 (front-left - CW)
     if(esc_1 > 1800){
       esc_1 = 1800;
     }else if(esc_1 < 1050){
@@ -426,6 +436,15 @@ void print_ypr()
   Serial.print("Roll: ");
   Serial.println(ypr[2] * 180/M_PI);
  
+}
+
+void print_loop_time()
+{
+    temp_time = micros();
+    difference = temp_time - loop_timer;
+    loop_timer = temp_time;
+    Serial.print("t:");
+    Serial.println(difference);
 }
 
 void setup_mpu6050()
