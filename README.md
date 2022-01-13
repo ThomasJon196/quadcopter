@@ -62,8 +62,7 @@ Usefull websites:
 
 ### Flight-Control for self stabilizing quadcopter
 
-Similar projects: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf\\
-https://reefwing.medium.com/how-to-write-your-own-flight-controller-software-part-1-ac08b6ecc01e\\
+Similar projects: https://github.com/rohanverma94/The-Open-Copter/blob/master/quadcopter-documentation/quadcopter-arduino.pdf \
 https://github.com/lobodol/drone-flight-controller
 
 Features that effect minimal loop time/refresh rate of flight controller: [more info](https://oscarliang.com/best-looptime-flight-controller/)
