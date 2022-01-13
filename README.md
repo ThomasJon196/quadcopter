@@ -12,7 +12,8 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
-- Tune PID parameters.
+- Checkout another interseting similar project.
+- Tune PID parameters.[LINK](https://www.technik-consulting.eu/en/optimizing/drone_PID-optimizing.html)
 - Refactor code in setup() function of flight controller: Rewrite mpu_setup
 - Understand Transmitter AutoAcknoledge, DataRate... other settings
 - Make prototypeboard to place gyro in the center of geometry/mass.
@@ -77,8 +78,9 @@ Features that effect minimal loop time/refresh rate of flight controller: [more 
 - LOOP(AIR-Routine)   
   - Arm(AUX1) & Disarm(AUX2) drone. 
   - read reviever data \[throttle, yaw, pitch, roll\] from nRF24L01-module
-  - read current angles \[pitch, roll, yaw\] from MPU6050
-  - Adjust ESC pulse (currently via Servo.h)
+  - calc current angles \[pitch, roll, yaw\] from MPU6050
+  - calc PID-Terms for each angle
+  - Adjust ESC pulse (currently via Servo.h) based in PID-terms
   - (integrate battery voltage) **TODO**
 
 ---
