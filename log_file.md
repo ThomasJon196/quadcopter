@@ -60,6 +60,14 @@ How to handle Lipo batteries?
 [Battery handling guide](https://www.robotshop.com/media/files/pdf/hyperion-g5-50c-3s-1100mah-lipo-battery-User-Guide.pdf)
 [Lipo charger manual](https://cdn.sparkfun.com/assets/c/d/8/1/5/16793-SkyRC_IMAX_B6_V2_Balance_Charger_-_Discharger_Instruction_Manual_EN_V1.0.pdf)
 
+
+### Arduino Baud-Rate
+ 
+- Sets the datarate in bits/s for the serial communication.
+- A to small baud-rate might slow down the loop(), if many Serial.prints are executed. Buffer hast to be reserved for each character. If the baud-rate is slow it takes longer to send one.
+- Remove all unneccecery Serial.prints from loop(), or safe them otherweise to read later.
+
+
 ### License
 
 If you find software that doesn’t have a license, that generally means you have no permission from the creators of the software to use, modify, or share the software. Although a code host such as GitHub may allow you to view and fork the code, this does not imply that you are permitted to use, modify, or share the software for any purpose.
