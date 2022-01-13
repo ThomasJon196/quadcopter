@@ -48,12 +48,9 @@ Usefull websites:
 - angular rate system implementation?
 - PWM frequency for ESC's via analogWrite() rather than Servo.h 490Hz/50Hz -> might not be responsive enough
 - digital low pass filter for MPU6050 20Hz?
-
-- Gyroscope + Accelerometer
 - I2C - Communication
 - DMP (digital motion processor) - programming to include magnetometer (future work)
-
-- (Interrupt Pin signales board when new data is available.
+- Interrupt Pin signales board when new data is available.
 
 ### Flight-Control for self stabilizing quadcopter
 
