@@ -4,7 +4,7 @@
 |---|---|
 |All for motors spin in the same direction, resulting in constant yaw movement due to torque. | Mount 2 clockwise and 2 counter-clockwise motors.|
 |Is the timedelta required for d-term calculation? |No. Should be constant most of the time. |
-|Drone has loses controll right after start and drifts in one direction. | |
+|Drone has loses controll right after start and drifts in one direction. | - Might be transmitter signal which sends a slight drift. -> disabled|
 
 
 
