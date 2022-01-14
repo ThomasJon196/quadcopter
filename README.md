@@ -28,7 +28,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - Install battery mount.
 - Measure batteries voltage drop.
 ---
-### ESC calibration
+### ESC
 
 To have properly working ESC's/motors the ESC's have to be calibrated.
 This is done by applying the minimum(1000us) and maximum(2000us) PWM-signal(pulse-width-modulation) to the ESC's while they are connected to a battery.\
@@ -39,6 +39,7 @@ more about electronic speed controller calibration: https://ardupilot.org/copter
 To arm the ESC's, connect the battery with minimal throttle speed (1000us).
 
 
+- PWM frequency for ESC's via analogWrite() rather than Servo.h 490Hz/50Hz -> might not be responsive enough
 
 ### IMU - MP6050 (+ Magnetometer)
 Usefull websites:
@@ -47,12 +48,10 @@ Usefull websites:
 - https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050 <- Complete library for MPU readings! (but how to include magnetometer?)
 
 
-- angular rate system implementation?
-- PWM frequency for ESC's via analogWrite() rather than Servo.h 490Hz/50Hz -> might not be responsive enough
 - digital low pass filter for MPU6050 20Hz?
 - I2C - Communication
 - DMP (digital motion processor) - programming to include magnetometer (future work)
-- Interrupt Pin signales board when new data is available.
+- Interrupt Pin signals board when new data is available.
 
 ### Flight-Control for self stabilizing quadcopter
 
