@@ -1,3 +1,7 @@
+
+15.01.2022 - Changed Servo.h library frequency from 50Hz -> 250Hz
+
+
 ## Problems i came across:
 
 |Problem|Solution|
