@@ -12,6 +12,7 @@ This repo contains a noobie quadcopter-build and implementation based on:
 - [3S Lipo Battery (XT60 female)](https://www.ampow.com/products/ovonic-50c-11-1-v-2200mah-3s1p-deans-lipo-battery?variant=34830436728988&utm_source=google&utm_medium=cpc&utm_campaign=Google+Shopping&currency=USD&gclid=EAIaIQobChMI6KPlmZeW9QIVgY9oCR33IQNXEAYYASABEgLOMPD_BwE)
 
 ## Next steps
+- Maybe just get a decent flight controller and start flying and collecting data.
 - PID only angles/ angles and angular velocities(might be easier for tuning). [source](https://robotics.stackexchange.com/questions/8895/quadcopter-pid-control-is-it-possible-to-stabilize-a-quadcopter-considering-onl)
 - Check refresh rate of of sensor.
 - Checkout another interseting similar project.
